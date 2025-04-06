@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Crypto Portfolio Manager",
+  "version": "1.0.0",
+  "description": "Gestionnaire de portefeuille de cryptomonnaies avec intégration TradingView",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://*.tradingview.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Crypto Portfolio Manager"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.tradingview.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+} 
