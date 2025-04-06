@@ -8,6 +8,7 @@ const TradeForm = () => {
   const [usdAmount, setUsdAmount] = useState('');
   const [cryptoAmount, setCryptoAmount] = useState(0);
   const [transactionType, setTransactionType] = useState('buy');
+  const [inputError, setInputError] = useState('');
 
   // Fonction pour récupérer les données actuelles
   const fetchCurrentData = async () => {
@@ -67,6 +68,35 @@ const TradeForm = () => {
     return usdValue / price;
   };
 
+  // Fonction pour valider et mettre à jour le montant USD
+  const handleUsdAmountChange = (e) => {
+    const value = e.target.value;
+    
+    // Vérifier si la valeur est vide
+    if (value === '') {
+      setUsdAmount('');
+      setInputError('');
+      return;
+    }
+    
+    // Vérifier si la valeur est un nombre positif
+    const numValue = parseFloat(value);
+    if (isNaN(numValue) || numValue < 0) {
+      setInputError('Veuillez entrer un montant positif');
+      return;
+    }
+    
+    // Vérifier si la valeur a plus de 2 décimales
+    if (value.includes('.') && value.split('.')[1].length > 2) {
+      setInputError('Maximum 2 décimales autorisées');
+      return;
+    }
+    
+    // Si tout est valide, mettre à jour le montant
+    setUsdAmount(value);
+    setInputError('');
+  };
+
   // Mettre à jour quand le montant USD change
   useEffect(() => {
     const amount = calculateCryptoAmount(parseFloat(usdAmount), currentData.price);
@@ -95,6 +125,7 @@ const TradeForm = () => {
       // Réinitialiser le formulaire
       setUsdAmount('');
       setCryptoAmount(0);
+      setInputError('');
       alert(`${type === 'buy' ? 'Achat' : 'Vente'} effectué avec succès`);
     } catch (error) {
       alert(`Erreur: ${error.message}`);
@@ -112,14 +143,17 @@ const TradeForm = () => {
         <label>Montant USD à {transactionType === 'buy' ? 'investir' : 'récupérer'}</label>
         <div className="amount-input-container">
           <input
-            type="number"
+            type="text"
             value={usdAmount}
-            onChange={(e) => setUsdAmount(e.target.value)}
-            step="any"
+            onChange={handleUsdAmountChange}
             placeholder="0.00"
+            className={inputError ? 'input-error' : ''}
+            pattern="[0-9]*[.]?[0-9]{0,2}"
+            inputMode="decimal"
           />
           <span className="currency-label">USD</span>
         </div>
+        {inputError && <div className="error-message">{inputError}</div>}
       </div>
 
       <div className="form-group">
@@ -136,7 +170,7 @@ const TradeForm = () => {
             setTransactionType('buy');
             handleTransaction('buy');
           }}
-          disabled={!currentData.ticker}
+          disabled={!currentData.ticker || !!inputError}
         >
           Acheter
         </button>
@@ -146,7 +180,7 @@ const TradeForm = () => {
             setTransactionType('sell');
             handleTransaction('sell');
           }}
-          disabled={!currentData.ticker}
+          disabled={!currentData.ticker || !!inputError}
         >
           Vendre
         </button>

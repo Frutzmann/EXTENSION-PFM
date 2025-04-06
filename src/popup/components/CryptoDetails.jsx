@@ -148,24 +148,32 @@ const CryptoDetails = ({ crypto, onBack }) => {
 
             <div className="transactions-history">
                 <h3>Historique des Transactions</h3>
-                {details.transactions.map((transaction, index) => (
-                    <div key={index} className="transaction-item">
-                        <div className={`transaction-type ${transaction.type}`}>
-                            {transaction.type === 'buy' ? 'Achat' : 'Vente'}
-                        </div>
-                        <div className="transaction-details">
-                            <div className="amount">
-                                {transaction.amount} {crypto.symbol}
-                            </div>
-                            <div className="price">
-                                @ ${transaction.price.toFixed(2)}
-                            </div>
-                            <div className="total">
-                                total: ${(transaction.amount * transaction.price).toFixed(2)}
-                            </div>
-                        </div>
-                    </div>
-                ))}
+                <div className="transactions-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Montant</th>
+                                <th>Prix</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {details.transactions.map((transaction, index) => (
+                                <tr key={index} className={transaction.type}>
+                                    <td>
+                                        <span className={`type-badge ${transaction.type}`}>
+                                            {transaction.type === 'buy' ? 'Achat' : 'Vente'}
+                                        </span>
+                                    </td>
+                                    <td>{transaction.amount.toFixed(8)} {crypto.symbol}</td>
+                                    <td>${transaction.price.toFixed(2)}</td>
+                                    <td>${(transaction.amount * transaction.price).toFixed(2)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );
